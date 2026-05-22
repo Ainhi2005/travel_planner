@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../../core/routes/app_router.dart';
+import 'package:go_router/go_router.dart';
+import 'package:travel_planner/core/routes/app_path.dart';
+import 'package:travel_planner/core/widgets/custom_text_field.dart';
+
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../widgets/auth_button.dart';
-import '../widgets/auth_text_field.dart';
 import '../widgets/social_button.dart';
 
 class LoginPage extends StatefulWidget {
@@ -29,64 +31,35 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 24),
 
-              // App Logo Card
-              Center(
-                child: Container(
-                  width: 72,
-                  height: 72,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Color(0xFF34D399), // Emerald gradient
-                        Color(0xFF059669),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF059669).withValues(alpha: 0.2),
-                        blurRadius: 12,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-                  ),
-                  alignment: Alignment.center,
-                  child: const Icon(
-                    Icons.explore_rounded,
-                    color: Colors.white,
-                    size: 36,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-
               // Brand Titles
-              Text(
-                'Travel Planner',
-                textAlign: TextAlign.center,
-                style: AppTextStyles.heading1.copyWith(
-                  color: AppColors.primary,
-                  fontSize: 30,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Đăng nhập để bắt đầu chuyến phiêu lưu tiếp theo',
-                textAlign: TextAlign.center,
-                style: AppTextStyles.body.copyWith(
-                  color: AppColors.textSecondary,
-                  fontSize: 14.5,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Travel Planner',
+
+                    style: AppTextStyles.heading1.copyWith(
+                      color: AppColors.primary,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Đăng nhập để bắt đầu chuyến phiêu lưu tiếp theo',
+                    style: AppTextStyles.body.copyWith(
+                      color: AppColors.textSecondary,
+                      fontSize: 14.5,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 32),
 
@@ -108,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Email Field
-                    AuthTextField(
+                    CustomTextField(
                       label: 'Địa chỉ Email',
                       hintText: 'Nhập email của bạn',
                       prefixIcon: Icons.email_outlined,
@@ -118,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 20),
 
                     // Password Field
-                    AuthTextField(
+                    CustomTextField(
                       label: 'Mật khẩu',
                       hintText: 'Nhập mật khẩu',
                       prefixIcon: Icons.lock_outlined,
@@ -216,9 +189,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).pushNamed(AppRouter.register);
-                          },
+                          onTap: () => context.push(AppPath.register),
                           child: Text(
                             'Đăng ký',
                             style: AppTextStyles.body.copyWith(

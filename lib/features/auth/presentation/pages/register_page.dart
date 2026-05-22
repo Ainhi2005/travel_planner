@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:travel_planner/core/widgets/custom_text_field.dart';
+
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../widgets/auth_button.dart';
-import '../widgets/auth_text_field.dart';
 import '../widgets/social_button.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -67,7 +68,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ],
               ),
               const SizedBox(height: 16),
-              
+
               // Page Titles
               Center(
                 child: Container(
@@ -103,7 +104,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
               ),
               const SizedBox(height: 24),
-              
+
               // Register Container Card
               Container(
                 padding: const EdgeInsets.all(24.0),
@@ -122,16 +123,16 @@ class _RegisterPageState extends State<RegisterPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Full Name Field
-                    AuthTextField(
+                    CustomTextField(
                       label: 'Họ và tên',
                       hintText: 'Nhập họ và tên',
                       prefixIcon: Icons.person_outline_rounded,
                       controller: _nameController,
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Email Field
-                    AuthTextField(
+                    CustomTextField(
                       label: 'Địa chỉ Email',
                       hintText: 'Nhập địa chỉ email',
                       prefixIcon: Icons.email_outlined,
@@ -139,9 +140,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Password Field
-                    AuthTextField(
+                    CustomTextField(
                       label: 'Mật khẩu',
                       hintText: 'Nhập mật khẩu',
                       prefixIcon: Icons.lock_outlined,
@@ -149,9 +150,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       isPassword: true,
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Confirm Password Field
-                    AuthTextField(
+                    CustomTextField(
                       label: 'Xác nhận mật khẩu',
                       hintText: 'Nhập lại mật khẩu',
                       prefixIcon: Icons.lock_outline_rounded,
@@ -159,19 +160,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       isPassword: true,
                     ),
                     const SizedBox(height: 24),
-                    
+
                     // Sign Up Button
                     AuthButton(
                       text: 'Đăng ký',
                       onPressed: () {
                         // Dummy register behavior
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Đăng ký tài khoản thành công!')),
+                          const SnackBar(
+                            content: Text('Đăng ký tài khoản thành công!'),
+                          ),
                         );
                       },
                     ),
                     const SizedBox(height: 24),
-                    
+
                     // "OR REGISTER WITH" Divider
                     Row(
                       children: [
@@ -201,7 +204,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    
+
                     // Social Button: Google (Full Width)
                     SocialButton(
                       type: SocialType.google,
@@ -210,7 +213,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       onPressed: () {},
                     ),
                     const SizedBox(height: 12),
-                    
+
                     // Social Button: Facebook (Full Width)
                     SocialButton(
                       type: SocialType.facebook,
@@ -219,7 +222,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       onPressed: () {},
                     ),
                     const SizedBox(height: 24),
-                    
+
                     // Footer Link to Login
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

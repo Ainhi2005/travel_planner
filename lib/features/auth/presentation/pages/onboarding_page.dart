@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../core/routes/app_router.dart';
+import 'package:go_router/go_router.dart';
+import 'package:travel_planner/core/routes/app_path.dart';
+
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../widgets/auth_button.dart';
@@ -47,11 +49,7 @@ class OnboardingPage extends StatelessWidget {
                     ],
                   ),
                   TextButton(
-                    onPressed: () {
-                      Navigator.of(
-                        context,
-                      ).pushReplacementNamed(AppRouter.login);
-                    },
+                    onPressed: () => context.pushReplacement(AppPath.login),
                     child: Text(
                       'Bỏ qua',
                       style: AppTextStyles.body.copyWith(
@@ -212,9 +210,7 @@ class OnboardingPage extends StatelessWidget {
               // Action Button
               AuthButton(
                 text: 'Tiếp theo',
-                onPressed: () {
-                  Navigator.of(context).pushReplacementNamed(AppRouter.login);
-                },
+                onPressed: () => context.pushReplacement(AppPath.login),
                 icon: const Icon(
                   Icons.arrow_forward_rounded,
                   color: Colors.white,

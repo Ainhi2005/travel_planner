@@ -1,8 +1,10 @@
 // ignore_for_file: deprecated_member_use
 
 import 'dart:async';
+
 import 'package:flutter/material.dart';
-import '../../../../core/routes/app_router.dart';
+import 'package:go_router/go_router.dart';
+import 'package:travel_planner/core/routes/app_path.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -18,7 +20,7 @@ class _SplashPageState extends State<SplashPage> {
     //Tự động chuyển sang màn hình Onboarding sau 3 giây
     Timer(const Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed(AppRouter.onboarding);
+        context.pushReplacement(AppPath.onboarding);
       }
     });
   }
@@ -51,12 +53,10 @@ class _SplashPageState extends State<SplashPage> {
                 return const SizedBox.shrink(); // Ẩn nếu lỗi, chỉ hiện gradient
               },
             ),
-            
+
             // Lớp phủ màu đen để chữ dễ đọc hơn
-            Container(
-              color: Colors.black.withOpacity(0.4),
-            ),
-            
+            Container(color: Colors.black.withOpacity(0.4)),
+
             // Nội dung chính
             SafeArea(
               child: Column(
@@ -76,9 +76,9 @@ class _SplashPageState extends State<SplashPage> {
                       size: 50,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 30),
-                  
+
                   // Tên app
                   const Text(
                     'Travel Planner',
@@ -88,27 +88,22 @@ class _SplashPageState extends State<SplashPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 10),
-                  
+
                   // Slogan
                   const Text(
                     'Hành trình của bạn, được chế tác tỉ mỉ.',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Colors.white, fontSize: 14),
                   ),
-                  
+
                   const SizedBox(height: 60),
-                  
+
                   // Vòng tròn loading
-                  const CircularProgressIndicator(
-                    color: Colors.white,
-                  ),
-                  
+                  const CircularProgressIndicator(color: Colors.white),
+
                   const SizedBox(height: 20),
-                  
+
                   // Text loading
                   const Text(
                     'ĐANG CHUẨN BỊ THẾ GIỚI CỦA BẠN...',
@@ -118,9 +113,9 @@ class _SplashPageState extends State<SplashPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 300),
-                  
+
                   // Badge Premium
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -154,7 +149,7 @@ class _SplashPageState extends State<SplashPage> {
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 20),
                 ],
               ),

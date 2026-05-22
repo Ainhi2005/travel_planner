@@ -1,46 +1,34 @@
 import 'package:flutter/material.dart';
-import '../../features/auth/presentation/pages/splash_page.dart';
-import '../../features/auth/presentation/pages/onboarding_page.dart';
-import '../../features/auth/presentation/pages/login_page.dart';
-import '../../features/auth/presentation/pages/register_page.dart';
+import 'package:go_router/go_router.dart';
+import 'package:travel_planner/core/routes/app_path.dart';
+import 'package:travel_planner/features/auth/presentation/pages/login_page.dart';
+import 'package:travel_planner/features/auth/presentation/pages/onboarding_page.dart';
+import 'package:travel_planner/features/auth/presentation/pages/register_page.dart';
+import 'package:travel_planner/features/auth/presentation/pages/splash_page.dart';
 
 class AppRouter {
-  static const String splash = '/';
-  static const String onboarding = '/onboarding';
-  static const String login = '/login';
-  static const String register = '/register';
+  static final GoRouter router = GoRouter(
+    initialLocation: AppPath.splash,
+    debugLogDiagnostics: true,
 
-  static Route<dynamic> onGenerateRoute(RouteSettings settings) {
-    switch (settings.name) {
-      case splash:
-        return MaterialPageRoute(
-          builder: (_) => const SplashPage(),
-          settings: settings,
-        );
-      case onboarding:
-        return MaterialPageRoute(
-          builder: (_) => const OnboardingPage(),
-          settings: settings,
-        );
-      case login:
-        return MaterialPageRoute(
-          builder: (_) => const LoginPage(),
-          settings: settings,
-        );
-      case register:
-        return MaterialPageRoute(
-          builder: (_) => const RegisterPage(),
-          settings: settings,
-        );
-      default:
-        return MaterialPageRoute(
-          builder: (_) => Scaffold(
-            body: Center(
-              child: Text('Không tìm thấy trang: ${settings.name}'),
-            ),
-          ),
-          settings: settings,
-        );
-    }
-  }
+    routes: [
+      GoRoute(path: AppPath.splash, builder: (context, state) => SplashPage()),
+      GoRoute(
+        path: AppPath.onboarding,
+        builder: (context, state) => OnboardingPage(),
+      ),
+      GoRoute(
+        path: AppPath.login,
+        builder: (context, state) => const LoginPage(),
+      ),
+      GoRoute(
+        path: AppPath.register,
+        builder: (context, state) => const RegisterPage(),
+      ),
+    ],
+
+    errorBuilder: (context, state) => Scaffold(
+      body: Center(child: Text("Khong tim thay trang: ${state.uri}")),
+    ),
+  );
 }

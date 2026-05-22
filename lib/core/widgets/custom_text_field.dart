@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
-class AuthTextField extends StatefulWidget {
+class CustomTextField extends StatefulWidget {
   final String? label;
   final Widget? rightLabelWidget;
   final String hintText;
@@ -12,7 +13,7 @@ class AuthTextField extends StatefulWidget {
   final TextInputType keyboardType;
   final String? Function(String?)? validator;
 
-  const AuthTextField({
+  const CustomTextField({
     super.key,
     this.label,
     this.rightLabelWidget,
@@ -25,10 +26,10 @@ class AuthTextField extends StatefulWidget {
   });
 
   @override
-  State<AuthTextField> createState() => _AuthTextFieldState();
+  State<CustomTextField> createState() => _AuthTextFieldState();
 }
 
-class _AuthTextFieldState extends State<AuthTextField> {
+class _AuthTextFieldState extends State<CustomTextField> {
   bool _obscureText = true;
 
   @override
@@ -88,7 +89,9 @@ class _AuthTextFieldState extends State<AuthTextField> {
                       });
                     },
                     child: Icon(
-                      _obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                      _obscureText
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
                       color: AppColors.textSecondary.withValues(alpha: 0.8),
                       size: 20,
                     ),
@@ -96,7 +99,10 @@ class _AuthTextFieldState extends State<AuthTextField> {
                 : null,
             filled: true,
             fillColor: const Color(0xFFF1F6F9),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide.none,
@@ -114,17 +120,11 @@ class _AuthTextFieldState extends State<AuthTextField> {
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(
-                color: AppColors.error,
-                width: 1.5,
-              ),
+              borderSide: const BorderSide(color: AppColors.error, width: 1.5),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(
-                color: AppColors.error,
-                width: 1.5,
-              ),
+              borderSide: const BorderSide(color: AppColors.error, width: 1.5),
             ),
           ),
         ),
