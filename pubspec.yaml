@@ -1,7 +1,7 @@
 name: travel_planner
 description: "A new Flutter project."
 
-publish_to: "none" #
+publish_to: "none"
 
 version: 1.0.0+1
 
@@ -23,20 +23,23 @@ dependencies:
   intl: ^0.18.1
   image_picker: ^1.0.4
   go_router: ^17.2.3
+
+  # --- THÊM ANNOTATION CHO FREEZED VÀ JSON Ở ĐÂY ---
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.9.0
+  cached_network_image: ^3.3.1 #ảnh mượt
   dio: ^5.9.2
-  freezed_annotation: ^3.1.0
-  json_annotation: ^4.12.0
-  cached_network_image: ^3.4.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   sqflite_common_ffi: ^2.3.0
-
   flutter_lints: ^5.0.0
-  build_runner: ^2.15.0
-  freezed: ^3.2.5
-  json_serializable: ^6.14.0
+
+  # --- THÊM THƯ VIỆN SINH CODE VÀO ĐÂY ---
+  build_runner: ^2.4.9
+  freezed: ^2.4.7
+  json_serializable: ^6.8.0
 
 flutter:
   uses-material-design: true
