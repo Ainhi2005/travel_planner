@@ -2,21 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travel_planner/core/routes/app_path.dart';
 import 'package:travel_planner/features/auth/presentation/pages/login_page.dart';
-import 'package:travel_planner/features/auth/presentation/pages/onboarding_page.dart';
 import 'package:travel_planner/features/auth/presentation/pages/register_page.dart';
-import 'package:travel_planner/features/auth/presentation/pages/splash_page.dart';
+import 'package:travel_planner/features/main/presentation/pages/main_page.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: AppPath.splash,
+    initialLocation: AppPath.login,
     debugLogDiagnostics: true,
 
     routes: [
-      GoRoute(path: AppPath.splash, builder: (context, state) => SplashPage()),
-      GoRoute(
-        path: AppPath.onboarding,
-        builder: (context, state) => OnboardingPage(),
-      ),
       GoRoute(
         path: AppPath.login,
         builder: (context, state) => const LoginPage(),
@@ -24,6 +18,10 @@ class AppRouter {
       GoRoute(
         path: AppPath.register,
         builder: (context, state) => const RegisterPage(),
+      ),
+      GoRoute(
+        path: AppPath.home,
+        builder: (context, state) => const MainPage(),
       ),
     ],
 

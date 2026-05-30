@@ -1,28 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:travel_planner/core/widgets/custom_text_field.dart';
+import 'package:travel_planner/features/auth/data/models/user_ui_model.dart';
+import 'package:travel_planner/features/auth/presentation/providers/auth_provider.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../widgets/auth_button.dart';
-import '../widgets/social_button.dart';
 
-class RegisterPage extends StatefulWidget {
+class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  ConsumerState<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _RegisterPageState extends ConsumerState<RegisterPage> {
   final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
   @override
   void dispose() {
     _nameController.dispose();
-    _emailController.dispose();
+    _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -30,6 +32,35 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final authstate = ref.watch(authNotifierProvider);
+    //lắng nghe đk thành công , thất bại
+    // lắng nghe đk thành công , thất bại
+    ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
+      next.whenOrNull(
+        data: (user) {
+          if (user != null) {
+            // Kiểm tra nếu user khác null (đăng ký thành công)
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Đăng ký tài khoảnnnn thành công!"),
+                backgroundColor: Colors.indigoAccent,
+              ),
+            );
+            // đk xong, tự đăng nhập, pop quay lại màn hình đăng nhập
+            Navigator.of(context).pop();
+          }
+        },
+        error: (error, stackTrace) {
+          // Nhớ bắt thêm lỗi ở đây nếu API báo lỗi
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(error.toString().replaceAll('Exception: ', '')),
+              backgroundColor: Colors.red,
+            ),
+          );
+        },
+      );
+    });
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -75,13 +106,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   width: 52,
                   height: 52,
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.1),
+                    color: AppColors.secondary.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
                     Icons.person_add_alt_1_rounded,
-                    color: AppColors.primary,
-                    size: 24,
+                    color: AppColors.secondary,
+                    size: 34,
                   ),
                 ),
               ),
@@ -131,13 +162,13 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Email Field
+                    // phone Field
                     CustomTextField(
-                      label: 'Địa chỉ Email',
-                      hintText: 'Nhập địa chỉ email',
-                      prefixIcon: Icons.email_outlined,
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
+                      label: 'Số điện thoại',
+                      hintText: 'Nhập SĐT',
+                      prefixIcon: Icons.phone_outlined,
+                      controller: _phoneController,
+                      keyboardType: TextInputType.phone,
                     ),
                     const SizedBox(height: 16),
 
@@ -163,66 +194,41 @@ class _RegisterPageState extends State<RegisterPage> {
 
                     // Sign Up Button
                     AuthButton(
-                      text: 'Đăng ký',
-                      onPressed: () {
-                        // Dummy register behavior
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Đăng ký tài khoản thành công!'),
-                          ),
-                        );
-                      },
+                      text: authstate.isLoading ? 'Đang đk' : 'Đăng ký',
+                      onPressed: authstate.isLoading
+                          ? null
+                          : () {
+                              final name = _nameController.text.trim();
+                              final phone = _phoneController.text.trim();
+                              final password = _passwordController.text;
+                              final confirmPassword =
+                                  _confirmPasswordController.text;
+                              if (name.isEmpty ||
+                                  phone.isEmpty ||
+                                  password.isEmpty ||
+                                  confirmPassword.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("vui lòng nhập đủ thông tin"),
+                                  ),
+                                );
+                                return;
+                              }
+                              if (password != confirmPassword) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Mật khẩu không khớp"),
+                                  ),
+                                );
+                                return;
+                              }
+                              ;
+                              ref
+                                  .read(authNotifierProvider.notifier)
+                                  .register(name, phone, password);
+                            },
                     ),
                     const SizedBox(height: 24),
-
-                    // "OR REGISTER WITH" Divider
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Divider(
-                            color: AppColors.border.withValues(alpha: 0.6),
-                            thickness: 1,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            'HOẶC ĐĂNG KÝ BẰNG',
-                            style: AppTextStyles.caption.copyWith(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            color: AppColors.border.withValues(alpha: 0.6),
-                            thickness: 1,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Social Button: Google (Full Width)
-                    SocialButton(
-                      type: SocialType.google,
-                      text: 'Tiếp tục với Google',
-                      isFullWidth: true,
-                      onPressed: () {},
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Social Button: Facebook (Full Width)
-                    SocialButton(
-                      type: SocialType.facebook,
-                      text: 'Tiếp tục với Facebook',
-                      isFullWidth: true,
-                      onPressed: () {},
-                    ),
-                    const SizedBox(height: 24),
-
                     // Footer Link to Login
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -240,7 +246,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           child: Text(
                             'Đăng nhập',
                             style: AppTextStyles.body.copyWith(
-                              color: AppColors.primary,
+                              color: AppColors.secondary,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

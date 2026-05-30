@@ -1,42 +1,68 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travel_planner/core/routes/app_path.dart';
 import 'package:travel_planner/core/widgets/custom_text_field.dart';
-
+import 'package:travel_planner/features/auth/data/models/user_ui_model.dart';
+import 'package:travel_planner/features/auth/presentation/providers/auth_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../widgets/auth_button.dart';
-import '../widgets/social_button.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final _emailController = TextEditingController(text: 'minh@gmail.com');
+class _LoginPageState extends ConsumerState<LoginPage> {
+  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isRememberMe = false;
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _phoneController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authNotifierProvider);
+    ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
+      next.whenOrNull(
+        data: (user) {
+          if (user != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Đăng nhập thành công!'),
+                backgroundColor: Colors.green,
+              ),
+            );
+            context.go(AppPath.home);
+          }
+        },
+        error: (error, stackTrace) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(error.toString().replaceAll('Exception: ', '')),
+              backgroundColor: Colors.red,
+            ),
+          );
+        },
+      );
+    });
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 24),
+              const SizedBox(height: 54),
 
               // Brand Titles
               Column(
@@ -46,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
                     'Travel Planner',
 
                     style: AppTextStyles.heading1.copyWith(
-                      color: AppColors.primary,
+                      color: AppColors.secondary,
                       fontSize: 30,
                       fontWeight: FontWeight.w800,
                     ),
@@ -61,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ],
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 62),
 
               // Login Form Card
               Container(
@@ -80,13 +106,13 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Email Field
+                    // phone Field
                     CustomTextField(
-                      label: 'Địa chỉ Email',
-                      hintText: 'Nhập email của bạn',
-                      prefixIcon: Icons.email_outlined,
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
+                      label: 'Sô điện thoại',
+                      hintText: 'Nhập số điện thoại',
+                      prefixIcon: Icons.call,
+                      controller: _phoneController,
+                      keyboardType: TextInputType.phone,
                     ),
                     const SizedBox(height: 20),
 
@@ -104,77 +130,51 @@ class _LoginPageState extends State<LoginPage> {
                         child: Text(
                           'Quên mật khẩu?',
                           style: AppTextStyles.caption.copyWith(
-                            color: AppColors.primary,
+                            color: AppColors.secondary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 58),
-
+                    const SizedBox(height: 28),
+                    // nhớ mật khâir
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: _isRememberMe,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _isRememberMe = value ?? false;
+                            });
+                          },
+                        ),
+                        Text("Nhớ mật khẩu"),
+                      ],
+                    ),
+                    const SizedBox(height: 38),
                     // Login Button
                     AuthButton(
-                      text: 'Đăng nhập',
-                      onPressed: () {
-                        // Dummy navigate to trip list or display success
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Đăng nhập thành công!'),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 24),
-
-                    // "OR CONTINUE WITH" Divider
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Divider(
-                            color: AppColors.border.withValues(alpha: 0.6),
-                            thickness: 1,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            'HOẶC TIẾP TỤC VỚI',
-                            style: AppTextStyles.caption.copyWith(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            color: AppColors.border.withValues(alpha: 0.6),
-                            thickness: 1,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Social Row
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SocialButton(
-                            type: SocialType.google,
-                            text: 'Google',
-                            onPressed: () {},
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: SocialButton(
-                            type: SocialType.facebook,
-                            text: 'Facebook',
-                            onPressed: () {},
-                          ),
-                        ),
-                      ],
+                      text: authState.isLoading ? 'Đang đn...' : 'đăng nhập',
+                      onPressed: authState.isLoading
+                          ? null
+                          : () {
+                              final phone = _phoneController.text.trim();
+                              final password = _passwordController.text;
+                              //kiểm tra đầu vào
+                              if (phone.isEmpty || password.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("vui lòng nhập mật khẩu"),
+                                    backgroundColor: Colors.amber,
+                                  ),
+                                );
+                                return;
+                              }
+                              // gọi hàm login trong AuthNotifier
+                              ref
+                                  .read(authNotifierProvider.notifier)
+                                  .login(phone, password);
+                            },
                     ),
                     const SizedBox(height: 24),
 
@@ -193,7 +193,7 @@ class _LoginPageState extends State<LoginPage> {
                           child: Text(
                             'Đăng ký',
                             style: AppTextStyles.body.copyWith(
-                              color: AppColors.primary,
+                              color: AppColors.secondary,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -204,43 +204,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 32),
-
-              // Trust and Security badges
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.security_rounded,
-                    size: 14,
-                    color: AppColors.textSecondary.withValues(alpha: 0.7),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    'BẢO MẬT',
-                    style: AppTextStyles.caption.copyWith(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.0,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Icon(
-                    Icons.public_rounded,
-                    size: 14,
-                    color: AppColors.textSecondary.withValues(alpha: 0.7),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    'MẠNG LƯỚI TOÀN CẦU',
-                    style: AppTextStyles.caption.copyWith(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.0,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
             ],
           ),
         ),
