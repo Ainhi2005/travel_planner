@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:travel_planner/core/widgets/custom_text_field.dart';
-import 'package:travel_planner/features/auth/data/models/user_ui_model.dart';
 import 'package:travel_planner/features/auth/presentation/providers/auth_provider.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -32,34 +31,29 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authstate = ref.watch(authNotifierProvider);
+    final authstate = ref.watch(authProvider);
     //lắng nghe đk thành công , thất bại
-    // lắng nghe đk thành công , thất bại
-    ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
-      next.whenOrNull(
-        data: (user) {
-          if (user != null) {
-            // Kiểm tra nếu user khác null (đăng ký thành công)
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Đăng ký tài khoảnnnn thành công!"),
-                backgroundColor: Colors.indigoAccent,
-              ),
-            );
-            // đk xong, tự đăng nhập, pop quay lại màn hình đăng nhập
-            Navigator.of(context).pop();
-          }
-        },
-        error: (error, stackTrace) {
-          // Nhớ bắt thêm lỗi ở đây nếu API báo lỗi
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(error.toString().replaceAll('Exception: ', '')),
-              backgroundColor: Colors.red,
-            ),
-          );
-        },
-      );
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      if (next.user != null && previous?.user == null) {
+        // Kiểm tra nếu user khác null (đăng ký thành công)
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Đăng ký tài khoảnnnn thành công!"),
+            backgroundColor: Colors.indigoAccent,
+          ),
+        );
+        // đk xong, tự đăng nhập, pop quay lại màn hình đăng nhập
+        Navigator.of(context).pop();
+      } else if (next.errorMessage != null && next.errorMessage != previous?.errorMessage) {
+        // Nhớ bắt thêm lỗi ở đây nếu API báo lỗi
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.errorMessage!),
+            backgroundColor: Colors.red,
+          ),
+        );
+        ref.read(authProvider.notifier).clearError();
+      }
     });
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -222,9 +216,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                 );
                                 return;
                               }
-                              ;
                               ref
-                                  .read(authNotifierProvider.notifier)
+                                  .read(authProvider.notifier)
                                   .register(name, phone, password);
                             },
                     ),

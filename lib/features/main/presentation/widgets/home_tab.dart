@@ -10,18 +10,14 @@ class HomeTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Lắng nghe trạng thái đăng nhập để tự động quay lại Login khi bấm Đăng xuất
-    ref.listen<AsyncValue>(authNotifierProvider, (previous, next) {
-      next.whenOrNull(
-        data: (user) {
-          if (user == null) {
-            // Nếu trạng thái user về null, quay về trang Login
-            context.go(AppPath.login);
-          }
-        },
-      );
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      if (next.user == null && previous?.user != null) {
+        // Nếu trạng thái user về null, quay về trang Login
+        context.go(AppPath.login);
+      }
     });
 
-    final userState = ref.watch(authNotifierProvider);
+    final authState = ref.watch(authProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -31,7 +27,7 @@ class HomeTab extends ConsumerWidget {
             icon: const Icon(Icons.logout),
             onPressed: () {
               // Gọi hàm logout của Riverpod để đăng xuất
-              ref.read(authNotifierProvider.notifier).logout();
+              ref.read(authProvider.notifier).logout();
             },
           ),
         ],
@@ -39,17 +35,17 @@ class HomeTab extends ConsumerWidget {
       body: Row(
         children: [
           Center(
-            child: userState.when(
-              data: (user) => Text('Chào mừng, ${user?.name ?? "Khách"}!'),
-              loading: () => const CircularProgressIndicator(),
-              error: (err, stack) => Text('Lỗi: $err'),
-            ),
+            child: authState.isLoading
+                ? const CircularProgressIndicator()
+                : authState.errorMessage != null
+                    ? Text('Lỗi: ${authState.errorMessage}')
+                    : Text('Chào mừng, ${authState.user?.username ?? "Khách"}!'),
           ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
               // Gọi hàm logout của Riverpod để đăng xuất
-              ref.read(authNotifierProvider.notifier).logout();
+              ref.read(authProvider.notifier).logout();
             },
           ),
         ],

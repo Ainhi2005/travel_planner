@@ -1,48 +1,75 @@
-//Repository làm nhiệm vụ giao tiếp giữa tầng dữ liệu và tầng UI/Logic. Nó quản lý việc xử lý lỗi (Try/Catch) và chuyển đổi dữ liệu.
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:travel_planner/core/providers/core_providers.dart';
 import 'package:travel_planner/features/auth/data/datasources/auth_local_data_source.dart';
-import 'package:travel_planner/features/auth/data/datasources/auth_remote_data_source.dart';
-import 'package:travel_planner/features/auth/data/models/user_ui_model.dart';
+import 'package:travel_planner/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:travel_planner/features/auth/data/models/auth_request_model.dart';
+import 'package:travel_planner/features/auth/domain/entities/user.dart';
+import 'package:travel_planner/features/auth/domain/repositories/auth_repository.dart';
 
-abstract class AuthRepository {
-  Future<UserModel> login(String phone, String password);
-  Future<UserModel> register(String name, String phone, String password);
-  Future<UserModel?> getCachedUser();
-  Future<void> logout();
-}
+final authRemoteDataSourceprovider = Provider((ref) {
+  final apiClient = ref.watch(apiClientProvider);
+  return AuthRemoteDatasource(apiClient.dio);
+});
+
+final authRepositoryProvider = Provider((ref) {
+  final remoteDataSource = ref.watch(authRemoteDataSourceprovider);
+  final localDataSource = ref.watch(authLocalDataSourceProvider);
+  return AuthRepositoryImpl(
+    remoteDatasource: remoteDataSource,
+    localDataSource: localDataSource,
+  );
+});
 
 class AuthRepositoryImpl implements AuthRepository {
-  final AuthRemoteDataSource _remoteDataSource;
-  final AuthLocalDataSource _authLocalDataSource;
-  AuthRepositoryImpl(this._remoteDataSource, this._authLocalDataSource);
+  final AuthRemoteDatasource remoteDatasource;
+  final AuthLocalDataSource localDataSource;
+
+  AuthRepositoryImpl({
+    required this.remoteDatasource,
+    required this.localDataSource,
+  });
+
   @override
-  Future<UserModel> login(String phone, String password) async {
-    try {
-      final user = await _remoteDataSource.login(phone, password);
-      await _authLocalDataSource.saveUser(user);
-      return user;
-    } catch (e) {
-      throw Exception('dang nhap that bai ,${e}');
+  Future<User> login(String phone, String password) async {
+    final request = LoginRequestModel(phone: phone, password: password);
+    final response = await remoteDatasource.login(request);
+    if (response.success && response.accessToken != null) {
+      await saveToken(response.accessToken!, response.refreshToken!);
+      return response.user!.toEntity();
+    } else {
+      throw Exception(response.message);
     }
   }
 
   @override
-  Future<UserModel> register(String name, String phone, String password) async {
-    try {
-      final user = await _remoteDataSource.register(name, phone, password);
-      await _authLocalDataSource.saveUser(user);
-      return user;
-    } catch (e) {
-      throw Exception('dang ki that bai, ${e}');
+  Future<User> register(String username, String phone, String password) async {
+    final request = RegisterRequestModel(
+      phone: phone,
+      username: username,
+      password: password,
+    );
+    final response = await remoteDatasource.register(request);
+    if (response.success && response.user != null) {
+      return response.user!.toEntity();
+    } else {
+      throw Exception(response.message);
     }
   }
 
   @override
-  Future<UserModel?> getCachedUser() {
-    return _authLocalDataSource.getUser();
+  Future<void> logout() async {
+    await localDataSource.clearTokens();
   }
 
   @override
-  Future<void> logout() {
-    return _authLocalDataSource.clearUser();
+  Future<String?> getAcessToken() async {
+    return await localDataSource.getAccessToken();
+  }
+
+  @override
+  Future<void> saveToken(String accessToken, String refreshToken) async {
+    await localDataSource.saveAccessToken(accessToken);
+    await localDataSource.saveRefreshToken(refreshToken);
   }
 }
+// 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_planner/core/routes/app_path.dart';
 import 'package:travel_planner/core/widgets/custom_text_field.dart';
-import 'package:travel_planner/features/auth/data/models/user_ui_model.dart';
 import 'package:travel_planner/features/auth/presentation/providers/auth_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -22,6 +22,40 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   bool _isRememberMe = false;
 
   @override
+  void initState() {
+    super.initState();
+    _loadSavedCredentials();
+  }
+
+  Future<void> _loadSavedCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    final phone = prefs.getString('remember_phone') ?? '';
+    final password = prefs.getString('remember_password') ?? '';
+    final isRememberMe = prefs.getBool('remember_me') ?? false;
+
+    if (isRememberMe) {
+      setState(() {
+        _phoneController.text = phone;
+        _passwordController.text = password;
+        _isRememberMe = true;
+      });
+    }
+  }
+
+  Future<void> _saveOrClearCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (_isRememberMe) {
+      await prefs.setString('remember_phone', _phoneController.text.trim());
+      await prefs.setString('remember_password', _passwordController.text);
+      await prefs.setBool('remember_me', true);
+    } else {
+      await prefs.remove('remember_phone');
+      await prefs.remove('remember_password');
+      await prefs.setBool('remember_me', false);
+    }
+  }
+
+  @override
   void dispose() {
     _phoneController.dispose();
     _passwordController.dispose();
@@ -30,29 +64,28 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authNotifierProvider);
-    ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
-      next.whenOrNull(
-        data: (user) {
-          if (user != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Đăng nhập thành công!'),
-                backgroundColor: Colors.green,
-              ),
-            );
-            context.go(AppPath.home);
-          }
-        },
-        error: (error, stackTrace) {
+    final authState = ref.watch(authProvider);
+    ref.listen<AuthState>(authProvider, (previous, next) async {
+      if (next.user != null && previous?.user == null) {
+        await _saveOrClearCredentials();
+        if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(error.toString().replaceAll('Exception: ', '')),
-              backgroundColor: Colors.red,
+            const SnackBar(
+              content: Text('Đăng nhập thành công!'),
+              backgroundColor: AppColors.success,
             ),
           );
-        },
-      );
+          context.go(AppPath.home);
+        }
+      } else if (next.errorMessage != null && next.errorMessage != previous?.errorMessage) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.errorMessage!),
+            backgroundColor:AppColors.error,
+          ),
+        );
+        ref.read(authProvider.notifier).clearError();
+      }
     });
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -93,7 +126,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               Container(
                 padding: const EdgeInsets.all(24.0),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.background,
                   borderRadius: BorderRadius.circular(30),
                   boxShadow: [
                     BoxShadow(
@@ -165,14 +198,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text("vui lòng nhập mật khẩu"),
-                                    backgroundColor: Colors.amber,
+                                    backgroundColor: AppColors.background,
                                   ),
                                 );
                                 return;
                               }
                               // gọi hàm login trong AuthNotifier
                               ref
-                                  .read(authNotifierProvider.notifier)
+                                  .read(authProvider.notifier)
                                   .login(phone, password);
                             },
                     ),

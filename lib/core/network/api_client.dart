@@ -1,22 +1,33 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:travel_planner/core/network/api_endpoints.dart';
 
 class ApiClient {
-  final Dio _dio = Dio();
+  late Dio _dio;
+  final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
   ApiClient() {
-    _dio.options = BaseOptions(
-      baseUrl: 'http://10.0.2.2:3000/api',
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
-      contentType: Headers.jsonContentType,
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: ApiEndpoints.baseUrl,
+        connectTimeout: Duration(seconds: 10),
+        receiveTimeout: Duration(seconds: 10),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      ),
     );
     _dio.interceptors.add(
-      // bộ giám sát , chặn
-      LogInterceptor(
-        requestBody: true,
-        responseBody: true,
-      ), // hiện lên khi debug
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          final token = await _secureStorage.read(key: 'access_token');
+          if (token != null) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          return handler.next(options);
+        },
+      ),
     );
   }
-  Dio get dio => _dio; // get để class khác dùng
-  // không dùng public tránh bị class khác thay đổi _dio
+  Dio get dio => _dio;
 }

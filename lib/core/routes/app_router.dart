@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travel_planner/core/routes/app_path.dart';
-import 'package:travel_planner/features/auth/presentation/pages/login_page.dart';
-import 'package:travel_planner/features/auth/presentation/pages/register_page.dart';
+import 'package:travel_planner/features/auth/presentation/screens/login_page.dart';
+import 'package:travel_planner/features/auth/presentation/screens/register_page.dart';
 import 'package:travel_planner/features/main/presentation/pages/main_page.dart';
 
 class AppRouter {
