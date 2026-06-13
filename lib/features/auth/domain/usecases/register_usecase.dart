@@ -1,7 +1,5 @@
-import 'package:travel_planner/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:travel_planner/features/auth/domain/entities/user.dart';
 import 'package:travel_planner/features/auth/domain/repositories/auth_repository.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RegisterUsecase {
   final AuthRepository authRepository;
@@ -19,8 +17,3 @@ class RegisterUsecase {
     return await authRepository.register(username, phone, password);
   }
 }
-
-final registerUseCaseProvider = Provider((ref) {
-  final authRepository = ref.watch(authRepositoryProvider);
-  return RegisterUsecase(authRepository: authRepository);
-});

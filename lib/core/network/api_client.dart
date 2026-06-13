@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:travel_planner/core/network/api_endpoints.dart';
+import 'package:travel_planner/core/network/api_error_handler.dart';
 
 class ApiClient {
   late Dio _dio;
@@ -30,4 +31,23 @@ class ApiClient {
     );
   }
   Dio get dio => _dio;
+
+
+  Future<dynamic> get(String url, {Map<String, dynamic>? queryParameters}) async {
+    try {
+      final response = await _dio.get(url, queryParameters: queryParameters);
+      return response.data;
+    } on DioException catch (e) {
+      throw Exception(ApiErrorHandler.getErrorMessage(e));
+    }
+  }
+
+  Future<dynamic> post(String url, {dynamic data}) async {
+    try {
+      final response = await _dio.post(url, data: data);
+      return response.data;
+    } on DioException catch (e) {
+      throw Exception(ApiErrorHandler.getErrorMessage(e));
+    }
+  }
 }

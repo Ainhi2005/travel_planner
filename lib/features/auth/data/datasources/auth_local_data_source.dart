@@ -15,6 +15,14 @@ class AuthLocalDataSource {
     await _secureStorage.write(key: 'access_token', value: token);
   }
 
+  Future<void> saveUserJson(String userJson) async {
+    await _secureStorage.write(key: 'user_data', value: userJson);
+  }
+
+  Future<String?> getUserJson() async {
+    return await _secureStorage.read(key: 'user_data');
+  }
+
   Future<String?> getRefreshToken() async {
     return await _secureStorage.read(key: 'refresh_token');
   }
@@ -26,6 +34,7 @@ class AuthLocalDataSource {
   Future<void> clearTokens() async {
     await _secureStorage.delete(key: 'access_token');
     await _secureStorage.delete(key: 'refresh_token');
+    await _secureStorage.delete(key: 'user_data');
   }
 }
 

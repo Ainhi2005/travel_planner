@@ -12,7 +12,7 @@ class AuthButton extends StatelessWidget {
     this.onPressed,
   });
 
-  @override
+    @override
   Widget build(BuildContext context) {
     final isEnabled = onPressed != null;
     return Container(
@@ -25,7 +25,8 @@ class AuthButton extends StatelessWidget {
                 end: Alignment.centerRight,
               )
             : null,
-        color: isEnabled ? null : Colors.grey.shade300,
+        // SỬA: Thay thế Colors.grey.shade300 bằng AppColors.border
+        color: isEnabled ? null : AppColors.border, 
         boxShadow: isEnabled
             ? [
                 BoxShadow(
@@ -50,7 +51,8 @@ class AuthButton extends StatelessWidget {
           text,
           style: AppTextStyles.button.copyWith(
             fontWeight: FontWeight.bold,
-            color: isEnabled ? Colors.white : Colors.grey.shade500,
+            // SỬA: Đồng bộ hóa sang AppColors.white và AppColors.textSecondary
+            color: isEnabled ? AppColors.white : AppColors.textSecondary,
           ),
         ),
       ),

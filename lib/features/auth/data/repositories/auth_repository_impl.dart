@@ -8,7 +8,7 @@ import 'package:travel_planner/features/auth/domain/repositories/auth_repository
 
 final authRemoteDataSourceprovider = Provider((ref) {
   final apiClient = ref.watch(apiClientProvider);
-  return AuthRemoteDatasource(apiClient.dio);
+  return AuthRemoteDatasource(apiClient);
 });
 
 final authRepositoryProvider = Provider((ref) {

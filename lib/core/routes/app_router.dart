@@ -1,14 +1,31 @@
-import 'package:flutter/material.dart';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travel_planner/core/routes/app_path.dart';
-import 'package:travel_planner/features/auth/presentation/screens/login_page.dart';
-import 'package:travel_planner/features/auth/presentation/screens/register_page.dart';
+import 'package:travel_planner/features/auth/presentation/pages/login_page.dart';
+import 'package:travel_planner/features/auth/presentation/pages/register_page.dart';
+import 'package:travel_planner/features/auth/presentation/providers/auth_provider.dart';
 import 'package:travel_planner/features/main/presentation/pages/main_page.dart';
 
-class AppRouter {
-  static final GoRouter router = GoRouter(
-    initialLocation: AppPath.login,
+final goRouterProvider = Provider<GoRouter>((ref) {
+  final authState = ref.watch(authProvider);
+  return GoRouter(
+    initialLocation: AppPath.home,
     debugLogDiagnostics: true,
+    redirect: (context, state) {
+      if (authState.isLoading) return null;
+      final isAuth = authState.isAuthenticated;
+      final isGoingLogin =
+          state.uri.toString() == AppPath.login ||
+          state.uri.toString() == AppPath.register;
+      if (!isAuth && !isGoingLogin) {
+        return AppPath.login;
+      }
+      if (isAuth && isGoingLogin) {
+        return AppPath.home;
+      }
+      return null;
+    },
 
     routes: [
       GoRoute(
@@ -21,12 +38,8 @@ class AppRouter {
       ),
       GoRoute(
         path: AppPath.home,
-        builder: (context, state) => const MainPage(),
+        builder: (context, state) => const MainScreen(),
       ),
     ],
-
-    errorBuilder: (context, state) => Scaffold(
-      body: Center(child: Text("Khong tim thay trang: ${state.uri}")),
-    ),
   );
-}
+});

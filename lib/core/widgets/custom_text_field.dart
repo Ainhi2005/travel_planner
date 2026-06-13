@@ -12,6 +12,7 @@ class CustomTextField extends StatefulWidget {
   final bool isPassword;
   final TextInputType keyboardType;
   final String? Function(String?)? validator;
+  final FocusNode? focusNode;
 
   const CustomTextField({
     super.key,
@@ -23,6 +24,7 @@ class CustomTextField extends StatefulWidget {
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
     this.validator,
+    this.focusNode,
   });
 
   @override
@@ -61,6 +63,7 @@ class _AuthTextFieldState extends State<CustomTextField> {
           const SizedBox(height: 8),
         ],
         TextFormField(
+          focusNode: widget.focusNode,
           controller: widget.controller,
           obscureText: _obscureText,
           keyboardType: widget.keyboardType,

@@ -1,36 +1,4 @@
-import 'package:travel_planner/features/auth/domain/entities/user.dart';
-
-class UserModel {
-  final int id;
-  final String username;
-  final String phone;
-  final String? avatar_url;
-  
-  UserModel({
-    required this.id,
-    required this.username,
-    required this.phone,
-    this.avatar_url,
-  });
-  
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
-      id: json['id'] as int,
-      username: json['username'] as String,
-      phone: json['phone'] as String,
-      avatar_url: json['avatar_url'] as String?,
-    );
-  }
-  
-  User toEntity() {
-    return User(
-      id: id,
-      username: username,
-      phone: phone,
-      avatar_url: avatar_url,
-    );
-  }
-}
+import 'package:travel_planner/features/auth/data/models/user_model.dart';
 class AuthResponseModel {
   
   final bool success;

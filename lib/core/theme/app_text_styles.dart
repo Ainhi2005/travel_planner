@@ -6,7 +6,7 @@ class AppTextStyles {
   static const TextStyle heading1 = TextStyle(
     fontSize: 28,
     fontWeight: FontWeight.w700,
-    color: AppColors.neutral,
+    color: AppColors.primary,
   );
 
   static const TextStyle heading2 = TextStyle(
@@ -38,4 +38,6 @@ class AppTextStyles {
     fontWeight: FontWeight.w600,
     color: Colors.white,
   );
+
+  static get regular => null;
 }
