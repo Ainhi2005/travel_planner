@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -10,9 +11,10 @@ class CustomTextField extends StatefulWidget {
   final IconData? prefixIcon;
   final TextEditingController? controller;
   final bool isPassword;
-  final TextInputType keyboardType;
+  final TextInputType? keyboardType;
   final String? Function(String?)? validator;
   final FocusNode? focusNode;
+  final List<TextInputFormatter>? inputFormatters;
 
   const CustomTextField({
     super.key,
@@ -22,9 +24,10 @@ class CustomTextField extends StatefulWidget {
     this.prefixIcon,
     this.controller,
     this.isPassword = false,
-    this.keyboardType = TextInputType.text,
+    this.keyboardType,
     this.validator,
     this.focusNode,
+    this.inputFormatters,
   });
 
   @override
@@ -52,10 +55,7 @@ class _AuthTextFieldState extends State<CustomTextField> {
               if (widget.label != null)
                 Text(
                   widget.label!,
-                  style: AppTextStyles.body.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.neutral.withValues(alpha: 0.8),
-                  ),
+                  style: AppTextStyles.body
                 ),
               if (widget.rightLabelWidget != null) widget.rightLabelWidget!,
             ],
@@ -67,6 +67,7 @@ class _AuthTextFieldState extends State<CustomTextField> {
           controller: widget.controller,
           obscureText: _obscureText,
           keyboardType: widget.keyboardType,
+          inputFormatters: widget.inputFormatters,
           validator: widget.validator,
           style: AppTextStyles.body.copyWith(
             color: AppColors.neutral,
@@ -101,7 +102,7 @@ class _AuthTextFieldState extends State<CustomTextField> {
                   )
                 : null,
             filled: true,
-            fillColor: const Color(0xFFF1F6F9),
+            fillColor: AppColors.textFieldFill,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 16,

@@ -17,4 +17,6 @@ class AppColors {
   static const Color warning = Color(0xFFF59E0B);
   static const Color error = Color(0xFFEF4444);
   static const Color white = Colors.white;
+  static const Color textFieldFill =  Color(0xFFF1F6F9);
+    static const Color gray = Color(0xFFE7E8E6);
 }

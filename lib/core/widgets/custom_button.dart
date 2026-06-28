@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
-class AuthButton extends StatelessWidget {
+class CustomButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
 
-  const AuthButton({
+  const CustomButton({
     super.key,
     required this.text,
     this.onPressed,
@@ -24,8 +24,7 @@ class AuthButton extends StatelessWidget {
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
               )
-            : null,
-        // SỬA: Thay thế Colors.grey.shade300 bằng AppColors.border
+            : null, 
         color: isEnabled ? null : AppColors.border, 
         boxShadow: isEnabled
             ? [
@@ -51,7 +50,6 @@ class AuthButton extends StatelessWidget {
           text,
           style: AppTextStyles.button.copyWith(
             fontWeight: FontWeight.bold,
-            // SỬA: Đồng bộ hóa sang AppColors.white và AppColors.textSecondary
             color: isEnabled ? AppColors.white : AppColors.textSecondary,
           ),
         ),

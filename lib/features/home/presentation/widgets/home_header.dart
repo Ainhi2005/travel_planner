@@ -14,12 +14,6 @@ class HomeHeader extends ConsumerWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CircleAvatar(
-          backgroundImage: user?.avatarUrl!=null
-          ? NetworkImage(user!.avatarUrl!) 
-          : AssetImage('assets/images/logo.jpg'),
-          radius: 20,
-        ),
         SizedBox(width: 10),
         Text(
           'Traver Planner',

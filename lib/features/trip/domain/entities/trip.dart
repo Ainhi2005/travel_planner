@@ -1,37 +1,34 @@
+// lib/features/trip/domain/entities/trip.dart
 import 'package:equatable/equatable.dart';
 
-class Trip extends Equatable{
+class TripEntity {
   final String id;
   final String title;
-  final int guestCount;
+  //final String coverImage;
   final DateTime startDate;
   final DateTime endDate;
-  final double minBudget;
-  final double maxBudget;
-  final double totalEstimatedCost;
-  final double costPerPerson;
+  final String status;
+  final String leadId;
+  final String? leadName;
+  final String? leadAvatar;
+  final double totalBudget;
+  final int memberCount;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
-  const Trip({
+  const TripEntity({
     required this.id,
     required this.title,
-    required this.guestCount,
+    //required this.coverImage,
     required this.startDate,
     required this.endDate,
-    required this.minBudget,
-    required this.maxBudget,
-    required this.totalEstimatedCost,
-    required this.costPerPerson,
+    required this.status,
+    required this.leadId,
+    this.leadName,
+    this.leadAvatar,
+    required this.totalBudget,
+    required this.memberCount,
+    required this.createdAt,
+    required this.updatedAt,
   });
-  @override
-  List<Object?> get props => [
-    id,
-    title,
-    guestCount,
-    startDate,
-    endDate,
-    minBudget,
-    maxBudget,
-    totalEstimatedCost,
-    costPerPerson,
-  ];
 }

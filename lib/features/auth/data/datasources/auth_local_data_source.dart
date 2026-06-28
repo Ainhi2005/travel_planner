@@ -1,7 +1,4 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:travel_planner/core/providers/core_providers.dart';
-
 class AuthLocalDataSource {
   final FlutterSecureStorage _secureStorage;
 
@@ -37,8 +34,3 @@ class AuthLocalDataSource {
     await _secureStorage.delete(key: 'user_data');
   }
 }
-
-final authLocalDataSourceProvider = Provider((ref) {
-  final secureStorage = ref.watch(secureStorageProvider);
-  return AuthLocalDataSource(secureStorage);
-});

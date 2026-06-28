@@ -1,25 +1,8 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travel_planner/core/providers/core_providers.dart';
 import 'package:travel_planner/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:travel_planner/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:travel_planner/features/auth/data/models/auth_request_model.dart';
-import 'package:travel_planner/features/auth/domain/entities/user.dart';
+import 'package:travel_planner/features/auth/domain/entities/user_entity.dart';
 import 'package:travel_planner/features/auth/domain/repositories/auth_repository.dart';
-
-final authRemoteDataSourceprovider = Provider((ref) {
-  final apiClient = ref.watch(apiClientProvider);
-  return AuthRemoteDatasource(apiClient);
-});
-
-final authRepositoryProvider = Provider((ref) {
-  final remoteDataSource = ref.watch(authRemoteDataSourceprovider);
-  final localDataSource = ref.watch(authLocalDataSourceProvider);
-  return AuthRepositoryImpl(
-    remoteDatasource: remoteDataSource,
-    localDataSource: localDataSource,
-  );
-});
-
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDatasource remoteDatasource;
   final AuthLocalDataSource localDataSource;
@@ -30,37 +13,38 @@ class AuthRepositoryImpl implements AuthRepository {
   });
 
   @override
-  Future<User> login(String phone, String password) async {
-    final request = LoginRequestModel(phone: phone, password: password);
+  Future<UserEntity> login(String email, String password) async {
+    final request = LoginRequestModel(email: email, password: password);
     final response = await remoteDatasource.login(request);
-    if (response.success && response.accessToken != null) {
-      await saveToken(response.accessToken!, response.refreshToken!);
-      return response.user!.toEntity();
-    } else {
+
+    if (!response.success) {
       throw Exception(response.message);
     }
+    await saveToken(response.accessToken!, response.refreshToken ?? '');
+    return response.user!;
   }
-
   @override
-  Future<User> register(String username, String phone, String password) async {
+  Future<UserEntity> register(String fullName, String email, String password) async {
     final request = RegisterRequestModel(
-      phone: phone,
-      username: username,
+      email: email,
+      fullname: fullName,
       password: password,
     );
     final response = await remoteDatasource.register(request);
-    if (response.success && response.user != null) {
-      return response.user!.toEntity();
-    } else {
+    if (!response.success) {
       throw Exception(response.message);
     }
+    if (response.user == null) {
+      throw Exception('Dữ liệu người dùng trả về không hợp lệ.');
+    }
+    // Không tự động lưu token ở đây để bắt buộc user phải đăng nhập thủ công
+    return response.user!;
   }
 
   @override
   Future<void> logout() async {
     await localDataSource.clearTokens();
   }
-
   @override
   Future<String?> getAcessToken() async {
     return await localDataSource.getAccessToken();
@@ -72,4 +56,3 @@ class AuthRepositoryImpl implements AuthRepository {
     await localDataSource.saveRefreshToken(refreshToken);
   }
 }
-// 

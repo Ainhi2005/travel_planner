@@ -1,36 +1,25 @@
-// lib/features/auth/data/models/user_model.dart hoặc trong auth_response_model.dart
-import '../../domain/entities/user.dart';
+import '../../domain/entities/user_entity.dart';
 
-class UserModel {
-  final int id;
-  final String username;
-  final String phone;
-  final String? avatarUrl; // Có thể dùng camelCase cho đúng chuẩn Dart
-
+class UserModel extends UserEntity {
   UserModel({
-    required this.id,
-    required this.username,
-    required this.phone,
-    this.avatarUrl,
+    required super.id,
+    required super.fullName,
+    required super.email,
   });
 
-  // Chịu trách nhiệm parse JSON từ API (nếu API đổi key, chỉ sửa ở đây)
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'] as int,
-      username: json['username'] as String,
-      phone: json['phone'] as String,
-      avatarUrl: json['avatar_url'] as String?, // Map key của API
+      id: json['id'] as String,
+      fullName: json['full_name'] as String,
+      email: json['email'] as String,
     );
   }
 
-  // Hàm chuyển đổi Model sang Entity để trả về cho Domain/Presentation
-  User toEntity() {
-    return User(
-      id: id,
-      username: username,
-      phone: phone,
-      avatarUrl: avatarUrl,
-    );
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'full_name': fullName,
+      'email': email,
+    };
   }
 }

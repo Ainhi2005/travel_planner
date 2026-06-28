@@ -4,9 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:travel_planner/core/routes/app_path.dart';
 import 'package:travel_planner/core/theme/app_colors.dart';
 import 'package:travel_planner/core/theme/app_text_styles.dart';
+import 'package:travel_planner/core/widgets/custom_button.dart';
 import 'package:travel_planner/core/widgets/custom_text_field.dart';
 import 'package:travel_planner/features/auth/presentation/providers/auth_provider.dart';
-import 'auth_button.dart';
 
 class LoginForm extends ConsumerStatefulWidget {
   const LoginForm({super.key});
@@ -16,26 +16,26 @@ class LoginForm extends ConsumerStatefulWidget {
 }
 
 class _LoginFormState extends ConsumerState<LoginForm> {
-  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _phoneFocusNode = FocusNode();
+  final _emailFocusNode = FocusNode();
 
   // Thêm lại biến này để ô Checkbox có thể tick chọn được
   bool _isRememberMe = false;
 
   @override
   void dispose() {
-    _phoneController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
-    _phoneFocusNode.dispose();
+    _emailFocusNode.dispose();
     super.dispose();
   }
 
   void _onLoginPressed() {
-    final phone = _phoneController.text.trim();
+    final email = _emailController.text.trim();
     final password = _passwordController.text;
     
-    if (phone.isEmpty || password.isEmpty) {
+    if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Vui lòng nhập đầy đủ thông tin")),
       );
@@ -43,7 +43,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     }
 
     // Đẩy dữ liệu qua provider để gọi API (không xử lý gì cái biến _isRememberMe cả)
-    ref.read(authProvider.notifier).login(phone, password);
+    ref.read(authProvider.notifier).login(email, password);
   }
 
   @override
@@ -68,12 +68,12 @@ class _LoginFormState extends ConsumerState<LoginForm> {
         children: [
           // 1. Ô nhập số điện thoại cơ bản
           CustomTextField(
-            label: 'Số điện thoại',
-            hintText: 'Nhập số điện thoại',
-            prefixIcon: Icons.call,
-            controller: _phoneController,
-            focusNode: _phoneFocusNode,
-            keyboardType: TextInputType.phone,
+            label: 'Nhập email',
+            hintText: 'Nhập email',
+            prefixIcon: Icons.email_outlined,
+            controller: _emailController,
+            focusNode: _emailFocusNode,
+            keyboardType: TextInputType.emailAddress,
           ),
           const SizedBox(height: 20),
           
@@ -116,7 +116,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
           const SizedBox(height: 32),
 
           // 4. Nút Đăng nhập
-          AuthButton(
+          CustomButton(
             text: authState.isLoading ? 'Đang đăng nhập...' : 'Đăng nhập',
             onPressed: authState.isLoading ? null : _onLoginPressed,
           ),

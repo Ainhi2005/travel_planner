@@ -10,17 +10,9 @@ class RegisterPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Lắng nghe sự kiện đăng ký thành công hoặc lỗi
     ref.listen<AuthState>(authProvider, (previous, next) {
-      if (next.user != null && previous?.user == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Đăng ký tài khoản thành công!"),
-            backgroundColor: AppColors.success,
-          ),
-        );
-        Navigator.of(context).pop();
-      } else if (next.errorMessage != null && next.errorMessage != previous?.errorMessage) {
+      // Chỉ lắng nghe lỗi để hiển thị SnackBar. Thành công đã xử lý ở bên trong nút Bấm (RegisterForm)
+      if (next.errorMessage != null && next.errorMessage != previous?.errorMessage) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(next.errorMessage!),
@@ -113,3 +105,4 @@ class RegisterPage extends ConsumerWidget {
     );
   }
 }
+

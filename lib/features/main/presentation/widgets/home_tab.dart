@@ -39,7 +39,7 @@ class HomeTab extends ConsumerWidget {
                 ? const CircularProgressIndicator()
                 : authState.errorMessage != null
                     ? Text('Lỗi: ${authState.errorMessage}')
-                    : Text('Chào mừng, ${authState.user?.username ?? "Khách"}!'),
+                    : Text('Chào mừng, ${authState.user?.fullName ?? "Khách"}!'),
           ),
           IconButton(
             icon: const Icon(Icons.logout),

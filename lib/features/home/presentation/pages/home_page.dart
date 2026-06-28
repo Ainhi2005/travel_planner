@@ -7,7 +7,7 @@ import 'package:travel_planner/features/home/presentation/widgets/current_item_c
 import 'package:travel_planner/features/home/presentation/widgets/home_header.dart';
 import 'package:travel_planner/features/home/presentation/widgets/warning_banner.dart';
 // Import cái Provider lúc nãy bạn vừa tạo
-import '../../../trip/presentation/pages/tripPage.dart';
+import '../../../trip/presentation/pages/trip_page.dart';
 import '../providers/home_provider.dart';
 import '../widgets/active_trip.dart';
 import '../widgets/next_schedule_header.dart';

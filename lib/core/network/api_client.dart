@@ -5,8 +5,9 @@ import 'package:travel_planner/core/network/api_error_handler.dart';
 
 class ApiClient {
   late Dio _dio;
-  final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
-  ApiClient() {
+  final FlutterSecureStorage _secureStorage;
+  
+  ApiClient(this._secureStorage) {
     _dio = Dio(
       BaseOptions(
         baseUrl: ApiEndpoints.baseUrl,

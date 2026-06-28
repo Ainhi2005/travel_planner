@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../auth/presentation/providers/auth_provider.dart';
 
@@ -16,11 +17,13 @@ class ProfilePage extends ConsumerWidget {
         child: Center(
           child: Column(
             children: [
-              Text('Xin chào : ${state.user?.username?? 'không tìm thấy người dùng'} nhé '),
+              Text('Xin chào : ${state.user?.fullName?? 'không tìm thấy người dùng'} nhé '),
               const SizedBox(height: 20),
               IconButton(
                 onPressed: () {
                   notifier.logout();
+                  // Điều hướng chủ động về trang đăng nhập
+                  context.go('/login');
                 },
                 icon: Icon(Icons.logout),
               ),
